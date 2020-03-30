@@ -1,9 +1,9 @@
 const cardsDiv = document.getElementById('gallery');
 const searchBar = document.querySelector('.search-container');
-const searchPersons = document.getElementsByClassName('name');
-const userCards = document.getElementsByClassName('user');
-let modalBackground = document.getElementById('modal-background');
 
+const searchPersons = document.getElementsByClassName('name');
+
+const scriptTag = document.querySelector('script');
 
 let users;
 
@@ -13,16 +13,16 @@ let selectedUserIndex;
 searchBar.innerHTML = `<form action="#" method="get">
                             <input type="search" id="search-input" class="search-input" placeholder="Search...">
                             <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-                        </form>`;
+                        </form>`; //appending search Bar
 ///////////////
 //// FETCH ////
 ///////////////
 
-fetch('https://randomuser.me/api/?results=12&nat=us')
-    .then(res => res.json())
-    .then(data => {
-        users = (Object.values(data));
-        creatingUser(Object.values(data));
+fetch('https://randomuser.me/api/?results=12&nat=us') //fetching data
+    .then(res => res.json()) //parsing data to json
+    .then(data => { //processing data
+        users = (Object.values(data));  //getting users
+        creatingUser(Object.values(data)); //creating users
     });
 
 ////////////////////////////
@@ -30,9 +30,9 @@ fetch('https://randomuser.me/api/?results=12&nat=us')
 ////////////////////////////
 
 function creatingUser(data) {
-    data[0].map((person, index) => {
+    data[0].map((person, index) => { //iterating through persons
         const userDiv = document.createElement('div');
-        cardsDiv.appendChild(userDiv);
+        cardsDiv.appendChild(userDiv); //appending person to the page
         userDiv.innerHTML = `
 
         <div class="${index} photo card-img-container">
@@ -44,8 +44,8 @@ function creatingUser(data) {
         <p class="${index} email card-text">${person.email}</p>
         <p class="${index} city card-text cap">${person.location.city}</p>
         </div>
-        `;
-        userDiv.className = index + ' user'+' card';
+        `; //setting inner html of the person card
+        userDiv.className = index + ' user'+' card'; //adding class to the user card
 
     });
 }
@@ -54,9 +54,12 @@ function creatingUser(data) {
 //// CREATING MODAL ////
 ////////////////////////
 
-function creatingModal() {
+function creatingModal(data) {
 const modalWindow = document.createElement('div');
-modalWindow.className = 'modal-container';
+const body = document.querySelector('body');
+body.insertBefore(modalWindow,scriptTag);//appending modal
+modalWindow.className = 'modal-container';  //adding class to the modal
+modalWindow.setAttribute('id', 'modal-container'); //adding id to the modal
     modalWindow.innerHTML = `
     <div class="modal">
         <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
@@ -65,6 +68,7 @@ modalWindow.className = 'modal-container';
             <h3 id="name" class="modal-name cap">${users[0][selectedUserIndex].name.first} ${users[0][selectedUserIndex].name.last}</h3>
             <p class="modal-email modal-text">${users[0][selectedUserIndex].email}</p>
             <p class="modal-city modal-text cap">${users[0][selectedUserIndex].location.city}</p>
+            <hr>
             <p class="modal-phone modal-text">${users[0][selectedUserIndex].cell}</p>
             <p class="modal-adress modal-text">${users[0][selectedUserIndex].location.street.number} ${users[0][selectedUserIndex].location.street.name}, ${users[0][selectedUserIndex].location.state} ${users[0][selectedUserIndex].location.postcode}</p>
             <p class="modal-birthday modal-text">Birthday: ${users[0][selectedUserIndex].dob.date.substr(8, 2)}/${users[0][selectedUserIndex].dob.date.substr(5, 2)}/${users[0][selectedUserIndex].dob.date.substr(0, 4)}</p>
@@ -74,96 +78,117 @@ modalWindow.className = 'modal-container';
         <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
         <button type="button" id="modal-next" class="modal-next btn">Next</button>
     </div>
-        `;
-
-    // switchingUsers();
+        `; //setting inner html of the modal
+    switchingUsers(); //calling switching users function
 }
 
 
-//
+
 // //////////////////////////////
 // //// SEARCH FUNCTIONALITY ////
 // //////////////////////////////
-//
-// searchBar.addEventListener('keyup', () => {
-//     const searchVal = searchBar.value.toLowerCase();
-//
-//     for (let i = 0; i < searchPersons.length; i++) {
-//         const persons = searchPersons[i].textContent.toLowerCase();
-//         if (persons.startsWith(searchVal) !== true) {
-//             searchPersons[i].parentNode.parentNode.style.display = 'none';
+
+const searchInput = document.getElementById('search-input');
+
+//OPTIONAL KEYUP SEARCH
+
+// searchInput.addEventListener('keyup', () => { //adding event listener to the input
+//     const searchVal = searchInput.value.toLowerCase(); //getting search window value to lower case
+//     for (let i = 0; i < searchPersons.length; i++) { //looping through the persons
+//         const persons = searchPersons[i].textContent.toLowerCase(); //getting person name
+//         if (persons.includes(searchVal) !== true) { //checking if the name does not include search value
+//             searchPersons[i].parentNode.parentNode.style.display = 'none'; //hiding persons
 //         } else {
-//             searchPersons[i].parentNode.parentNode.style.display = '';
+//             searchPersons[i].parentNode.parentNode.style.display = ''; //showing person that includes search value
 //         }
 //     }
 // });
-//
+
+const searchButton = document.getElementById('search-submit');
+searchButton.addEventListener('click', () => { //adding event listener to the search button
+    const searchVal = searchInput.value.toLowerCase(); //getting search window value to lower case
+    for (let i = 0; i < searchPersons.length; i++) { //looping through the persons
+        const persons = searchPersons[i].textContent.toLowerCase(); //getting person name
+        if (persons.includes(searchVal) !== true) { //checking if the name does not include search value
+            searchPersons[i].parentNode.parentNode.style.display = 'none'; //hiding persons
+        } else {
+            searchPersons[i].parentNode.parentNode.style.display = ''; //showing person that includes search value
+        }
+    }
+});
+
 // //////////////////////////////
 // //// MODAL FUNCTIONALITY /////
 // //////////////////////////////
-//
-// cardsDiv.addEventListener('click', (e) => {
-//     modalWindow.style.display = 'flex';
-//     modalWindow.classList.add('visible');
-//     modalBackground.style.display = 'initial';
-//     modalBackground.classList.add('visible');
-//     const selected = e.target;
-//     selectedUserIndex = parseInt(selected.getAttribute('class').substr(0,2));
-//     creatingModal();
-//     closingModal();
-//     console.log(selectedUserIndex);
-//
-// });
-//
-// function closingModal() {
-//     let modalClosingX = document.getElementById('closing-modal');
-//     modalClosingX.addEventListener('click', () => {
-//         modalWindow.style.display = 'none';
-//         modalWindow.classList.remove('visible');
-//         modalBackground.style.display = 'none';
-//         modalBackground.classList.remove('visible');
-//         selectedUserIndex = "";
-//     });
-//
-//
-//     modalBackground.addEventListener('click', (e) => {
-//         const closingTarget = e.target;
-//         const closingClick = closingTarget.getAttribute('id');
-//         if(closingClick != 'modal'){
-//             modalWindow.style.display = 'none';
-//             modalWindow.classList.remove('visible');
-//             modalBackground.style.display = 'none';
-//             modalBackground.classList.remove('visible');
-//             selectedUserIndex = "";
-//         }
-//     })
-// }
-//
-// function switchingUsers() {
-//     const modalArrowRight = document.getElementById('modal-arrow-right');
-//     const modalArrowLeft = document.getElementById('modal-arrow-left');
-//
-//     modalArrowRight.addEventListener('click', () => {
-//         if (selectedUserIndex < users[0].length - 1) {
-//             selectedUserIndex++;
-//         } else {
-//             selectedUserIndex = 0;
-//         }
-//         console.log(selectedUserIndex);
-//
-//         creatingModal();
-//         closingModal();
-//     });
-//
-//     modalArrowLeft.addEventListener('click', () => {
-//         if (selectedUserIndex != 0) {
-//             selectedUserIndex--;
-//         } else {
-//             selectedUserIndex = 11;
-//         }
-//         console.log(selectedUserIndex);
-//
-//         creatingModal();
-//         closingModal();
-//     });
-// }
+
+
+//EVENT LISTENER FOR LAUNCHING MODAL
+cardsDiv.addEventListener('click', (e) => {
+    const selected = e.target;
+    selectedUserIndex = parseInt(selected.getAttribute('class').substr(0,2)); //getting index of user for modal user data
+    creatingModal(); //calling creating modal
+    closingModal(); //calling closingModal function with event listener for closing modal
+    backgroundClosing(); //calling backgroundClosing function with event listener for closing modal with background click
+});
+
+//FUNCTION FOR CLOSING MODAL
+function closingModal() {
+    let modalClosingX = document.getElementById('modal-close-btn');
+    modalClosingX.addEventListener('click', () => { //event listener for x button
+    removingOldModal();  //calling removingOldModal function
+    selectedUserIndex = ""; //resetting selectedUserIndex
+    });
+}
+
+//FUNCTION FOR CLOSING MODAL WITH THE BACKGROUND CLICK
+function backgroundClosing() {
+    const modalBackground = document.getElementById('modal-container');
+    modalBackground.addEventListener('click', (e) => { //event listener for click
+        const closingTarget = e.target; //getting click target
+        const closingClick = closingTarget.getAttribute('class'); //getting target class name
+        if (closingClick !== 'modal-info-container' && closingClick === 'modal-container') {
+            //checking if the target class name is equal modal-container and it isn't modal-info-container
+            removingOldModal(); //calling removingOldModal function
+            selectedUserIndex = ""; //resetting selectedUserIndex
+        }
+    });
+}
+
+//FUNCTION FOR REMOVING OLD MODAL DATA
+function removingOldModal() {
+    const openedModal = document.getElementById('modal-container');
+    const body = document.querySelector('body');
+    body.removeChild(openedModal); //removing modal
+}
+
+//FUNCTION FOR SWITCHING USERS
+function switchingUsers() {
+    const modalArrowRight = document.getElementById('modal-next');
+    const modalArrowLeft = document.getElementById('modal-prev');
+//SWITCHING FORWARD
+    modalArrowRight.addEventListener('click', () => { //event listener for right arrow
+        if (selectedUserIndex < users[0].length - 1) { //checking is less than users length -1
+            selectedUserIndex++; //switching to the next user
+        } else {
+            selectedUserIndex = 0; //if it's the last person, switching to the first
+        }
+        // console.log(selectedUserIndex);
+        removingOldModal(); //removing old modal
+        creatingModal(); //creating new modal
+        closingModal(); //calling closingModal function with event listener for closing modal
+        backgroundClosing(); //calling backgroundClosing function with event listener for closing modal with background click
+    });
+//SWITCHING BACK
+    modalArrowLeft.addEventListener('click', () => {
+        if (selectedUserIndex !== 0) { //checking if index si not equal 0
+            selectedUserIndex--; //substracting 1 from index
+        } else {
+            selectedUserIndex = 11; //if index is 0 switching to the last user
+        }
+        // console.log(selectedUserIndex);
+        removingOldModal(); //removing old modal
+        creatingModal(); //creating new modal
+        closingModal(); //calling closingModal function with event listener for closing modal
+        backgroundClosing(); //calling backgroundClosing function with event listener for closing modal with background click
+    });
+}
