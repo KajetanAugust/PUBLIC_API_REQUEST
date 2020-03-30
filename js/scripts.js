@@ -71,7 +71,7 @@ modalWindow.setAttribute('id', 'modal-container'); //adding id to the modal
             <hr>
             <p class="modal-phone modal-text">${users[0][selectedUserIndex].cell}</p>
             <p class="modal-adress modal-text">${users[0][selectedUserIndex].location.street.number} ${users[0][selectedUserIndex].location.street.name}, ${users[0][selectedUserIndex].location.state} ${users[0][selectedUserIndex].location.postcode}</p>
-            <p class="modal-birthday modal-text">Birthday: ${users[0][selectedUserIndex].dob.date.substr(8, 2)}/${users[0][selectedUserIndex].dob.date.substr(5, 2)}/${users[0][selectedUserIndex].dob.date.substr(0, 4)}</p>
+            <p class="modal-birthday modal-text">Birthday: ${users[0][selectedUserIndex].dob.date.substr(5, 2)}/${users[0][selectedUserIndex].dob.date.substr(8, 2)}/${users[0][selectedUserIndex].dob.date.substr(0, 4)}</p>
         </div>
     </div>
     <div class="modal-btn-container">
